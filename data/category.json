@@ -1,0 +1,129 @@
+[
+    {
+      "id": "60c72b2f5f1b2c001f6f8a3c",
+      "name": "Electronics",
+      "parentId": null,
+      "parent": null,
+      "children": [
+        {
+          "id": "60c72b3f5f1b2c001f6f8a3d",
+          "name": "Mobile Phones",
+          "parentId": "60c72b2f5f1b2c001f6f8a3c",
+          "parent": {
+            "id": "60c72b2f5f1b2c001f6f8a3c",
+            "name": "Electronics",
+            "parentId": null,
+            "parent": null
+          },
+          "children": [],
+          "createdAt": "2024-12-01T10:00:00Z",
+          "updatedAt": "2024-12-19T10:00:00Z",
+          "products": [
+            {
+              "id": "60c72c6b5f1b2c001f6f8a3e",
+              "name": "iPhone 14",
+              "price": 999
+            },
+            {
+              "id": "60c72c8d5f1b2c001f6f8a3f",
+              "name": "Samsung Galaxy S23",
+              "price": 899
+            }
+          ]
+        },
+        {
+          "id": "60c72b4f5f1b2c001f6f8a3e",
+          "name": "Laptops",
+          "parentId": "60c72b2f5f1b2c001f6f8a3c",
+          "parent": {
+            "id": "60c72b2f5f1b2c001f6f8a3c",
+            "name": "Electronics",
+            "parentId": null,
+            "parent": null
+          },
+          "children": [],
+          "createdAt": "2024-12-02T10:00:00Z",
+          "updatedAt": "2024-12-19T10:00:00Z",
+          "products": [
+            {
+              "id": "60c72c6b5f1b2c001f6f8a40",
+              "name": "MacBook Pro 16",
+              "price": 2399
+            },
+            {
+              "id": "60c72c8d5f1b2c001f6f8a41",
+              "name": "Dell XPS 13",
+              "price": 1499
+            }
+          ]
+        }
+      ],
+      "createdAt": "2024-12-01T10:00:00Z",
+      "updatedAt": "2024-12-19T10:00:00Z",
+      "products": []
+    },
+    {
+      "id": "60c72b2f5f1b2c001f6f8a42",
+      "name": "Clothing",
+      "parentId": null,
+      "parent": null,
+      "children": [
+        {
+          "id": "60c72b5f5f1b2c001f6f8a43",
+          "name": "Men's Apparel",
+          "parentId": "60c72b2f5f1b2c001f6f8a42",
+          "parent": {
+            "id": "60c72b2f5f1b2c001f6f8a42",
+            "name": "Clothing",
+            "parentId": null,
+            "parent": null
+          },
+          "children": [],
+          "createdAt": "2024-12-03T10:00:00Z",
+          "updatedAt": "2024-12-19T10:00:00Z",
+          "products": [
+            {
+              "id": "60c72d1b5f1b2c001f6f8a44",
+              "name": "T-shirt",
+              "price": 25
+            },
+            {
+              "id": "60c72d3b5f1b2c001f6f8a45",
+              "name": "Jeans",
+              "price": 40
+            }
+          ]
+        },
+        {
+          "id": "60c72b7f5f1b2c001f6f8a46",
+          "name": "Women's Apparel",
+          "parentId": "60c72b2f5f1b2c001f6f8a42",
+          "parent": {
+            "id": "60c72b2f5f1b2c001f6f8a42",
+            "name": "Clothing",
+            "parentId": null,
+            "parent": null
+          },
+          "children": [],
+          "createdAt": "2024-12-04T10:00:00Z",
+          "updatedAt": "2024-12-19T10:00:00Z",
+          "products": [
+            {
+              "id": "60c72d5b5f1b2c001f6f8a47",
+              "name": "Dress",
+              "price": 60
+            },
+            {
+              "id": "60c72d7b5f1b2c001f6f8a48",
+              "name": "Blouse",
+              "price": 30
+            }
+          ]
+        }
+      ],
+      "createdAt": "2024-12-01T10:00:00Z",
+      "updatedAt": "2024-12-19T10:00:00Z",
+      "products": []
+    }
+  ]
+  
