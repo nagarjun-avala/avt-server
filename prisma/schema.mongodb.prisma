@@ -3,18 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 model Admin {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
   username String  @unique
   fullname String
   email    String?
   mobile   String?
   password String
-  roleId   String  @db.Uuid
+  roleId   String  @db.ObjectId
   role     Role    @relation(fields: [roleId], references: [id])
 
   createdAt DateTime @default(now())
@@ -22,7 +22,7 @@ model Admin {
 }
 
 model Role {
-  id    String @id @default(uuid()) @db.Uuid
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
   code  String @unique
   label String
   short String
@@ -34,17 +34,17 @@ model Role {
 }
 
 model Product {
-  id            String   @id @default(uuid()) @db.Uuid
-  barcodeId     String   @unique @db.Uuid
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  barcodeId     String   @unique @db.ObjectId
   name          String
   description   String?
-  categoryId    String   @db.Uuid
+  categoryId    String   @db.ObjectId
   price         Float
   stockQty      BigInt
   averageRating Float    @default(0.0)
   reviewCount   Int      @default(0)
   reviews       Review[]
-  supplierId    String   @db.Uuid
+  supplierId    String   @db.ObjectId
 
   category Category @relation("ProductToCategory", fields: [categoryId], references: [id])
   supplier Supplier @relation(fields: [supplierId], references: [id])
@@ -57,9 +57,9 @@ model Product {
 }
 
 model Category {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
   name     String     @unique
-  parentId String?    @db.Uuid
+  parentId String?    @db.ObjectId
   parent   Category?  @relation("CategoryToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children Category[] @relation("CategoryToParent")
 
@@ -70,11 +70,11 @@ model Category {
 }
 
 model Review {
-  id       String  @id @default(uuid()) @db.Uuid
-  rating   Int     @default(0) // Rating scale, e.g., 1-5
-  comment  String?
-  userId   String  @db.Uuid // Reference to the user who made the review
-  productId String  @db.Uuid // Foreign key to Product
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  rating    Int     @default(0) // Rating scale, e.g., 1-5
+  comment   String?
+  userId    String  @db.ObjectId // Reference to the user who made the review
+  productId String  @db.ObjectId // Foreign key to Product
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,7 +84,7 @@ model Review {
 }
 
 model User {
-  id     String  @id @default(uuid()) @db.Uuid
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
   email  String  @unique
   name   String
   mobile String?
@@ -95,10 +95,10 @@ model User {
 }
 
 model Supplier {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
   name     String
   contact  String
-  address  Json
+  address  Address
   products Product[]
 
   createdAt DateTime @default(now())
@@ -106,10 +106,16 @@ model Supplier {
 }
 
 // Embedded type for storing address details
-// Using JSON type in PostgreSQL to store the Address as JSON object
+type Address {
+  street String
+  city   String
+  state  String
+  zip    String
+}
+
 model InventoryTransaction {
-  id              String   @id @default(uuid()) @db.Uuid
-  productId       String   @db.Uuid
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId       String   @db.ObjectId
   product         Product  @relation(fields: [productId], references: [id])
   quantity        Int
   type            String // e.g., "IN" for stock added, "OUT" for stock removed
@@ -120,7 +126,7 @@ model InventoryTransaction {
 }
 
 model Barcode {
-  id      String    @id @default(uuid()) @db.Uuid
+  id      String    @id @default(auto()) @map("_id") @db.ObjectId
   code    String    @unique
   ean13   String?   @unique
   Product Product[]

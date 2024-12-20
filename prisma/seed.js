@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import fs from "fs";
-import path from "path";
+const { PrismaClient } = require("@prisma/client");
+const fs = require("fs");
+const path = require("path");
 const prisma = new PrismaClient();
 
 async function deleteAllData(orderedFileNames) {
@@ -26,19 +26,10 @@ async function main() {
   const dataDirectory = path.join(__dirname, "seedData");
 
   const orderedFileNames = [
-    "products.json",
-    "expenseSummary.json",
-    "sales.json",
-    "salesSummary.json",
-    "purchases.json",
-    "purchaseSummary.json",
-    "users.json",
-    "expenses.json",
-    "expenseByCategory.json",
-    "roles.json",
+    // "role.json", -Done
   ];
 
-  return null /** Please create Seed Data first According to databse model */
+  // return null /** Please create Seed Data first According to databse model */
 
   await deleteAllData(orderedFileNames);
 
