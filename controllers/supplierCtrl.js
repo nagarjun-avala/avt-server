@@ -1,16 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const {
-  validateSupplier
-} = require("../helpers/validator");
+const { validateSupplier } = require("../helpers/validator");
 
 const supplierCtrl = {
   create: async (req, res) => {
     try {
       let errors = [];
-      const { name, mobile, email, website, address } = req.body;
-      errors = validateSupplier(name, mobile, email, website, address);
+      const { name, mobile, email, website, addressId, isActive } = req.body;
+      errors = validateSupplier(name, mobile, email, website);
 
       if (errors.length > 0) {
         return res.status(400).json({
@@ -26,7 +24,8 @@ const supplierCtrl = {
           mobile,
           email,
           website,
-          address
+          addressId,
+          isActive,
         },
       });
 

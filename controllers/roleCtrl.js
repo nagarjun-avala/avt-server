@@ -5,7 +5,19 @@ const roleCtrl = {
   create: async (req, res) => {
     try {
       var errors = [];
-      const { code, label, short } = req.body;
+      const {
+        code,
+        label,
+        short,
+        isActive,
+        type,
+        priority,
+        canDelete,
+        canUpdate,
+        activatedAt,
+        description,
+        createdById,
+      } = req.body;
       if (!code)
         errors = [
           ...errors,
@@ -50,12 +62,20 @@ const roleCtrl = {
           code,
           label,
           short,
+          isActive,
+          type,
+          priority,
+          canDelete,
+          canUpdate,
+          activatedAt,
+          description,
+          createdById,
         },
       });
 
       res.send({
-        status:"success",
-        message:"Role Created successfully",
+        status: "success",
+        message: "Role Created successfully",
         role,
       });
     } catch (error) {
@@ -75,7 +95,7 @@ const roleCtrl = {
         status: "success",
         message: "Roles data fetched successfully",
         data: {
-          len:roles.length,
+          len: roles.length,
           roles,
         },
       });

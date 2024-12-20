@@ -16,10 +16,20 @@ const categoryCtrl = {
   create: async (req, res) => {
     try {
       let errors = [];
-      const { name, parentId } = req.body;
+      const {
+        name,
+        slug,
+        parentId,
+        level,
+        displayOrder,
+        isActive,
+        description,
+        createdBy,
+        updatedBy,
+      } = req.body;
 
       // Validate name
-      if (!name || typeof name !== 'string' || name.trim().length === 0) {
+      if (!name || typeof name !== "string" || name.trim().length === 0) {
         errors.push({
           field: "name",
           message: "Category name is required and must be a non-empty string.",
@@ -64,7 +74,14 @@ const categoryCtrl = {
       const newCategory = await prisma.category.create({
         data: {
           name,
+          slug,
           parentId: parentId || null,
+          level,
+          displayOrder,
+          isActive,
+          description,
+          createdBy,
+          updatedBy,
         },
       });
 
@@ -104,7 +121,7 @@ const categoryCtrl = {
         error: error.message,
       });
     }
-  }
+  },
 };
 
 module.exports = categoryCtrl;

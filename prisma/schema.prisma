@@ -44,13 +44,15 @@ model Role {
   canDelete   Boolean   @default(true)
   canUpdate   Boolean   @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  createdBy Admin?   @relation("RoleCreatedBy", fields: [createdById], references: [id])
-  updatedBy Admin?   @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
   createdById String? @db.Uuid
   updatedById String? @db.Uuid
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy Admin?   @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  updatedBy Admin?   @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
+  
   Admins Admin[]
 
   @@index([label]) // Optimized querying by label
@@ -93,10 +95,12 @@ model Category {
   displayOrder Int       @default(0)
   isActive    Boolean    @default(true)
   description String?    @db.Text
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+
   createdBy   String?    @db.Uuid
   updatedBy   String?    @db.Uuid
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   Product Product[] @relation("ProductToCategory")
 
@@ -118,6 +122,7 @@ model Supplier {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
 model Review {
   id         String   @id @default(uuid()) @db.Uuid
   rating     Int      @default(0)
@@ -143,7 +148,6 @@ model Barcode {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
 
 model User {
   id     String  @id @default(uuid()) @db.Uuid
