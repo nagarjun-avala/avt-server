@@ -20,13 +20,20 @@ app.use(cookieParser());
 /* ROUTEs & its IMPORTS */
 app.use("/api", require("./routes/authRoutes"));
 app.use("/api/role", require("./routes/roleRoutes"));
+app.use("/api/category", require("./routes/categoryRoutes"));
+app.use("/api/supplier", require("./routes/supplierRoutes"));
+app.use("/api/product", require("./routes/productRoutes"));
+
+/** TEST ROUTE */
 app.use("/api/test", require("./routes/testRoute"));
 
 const port = process.env.PORT || 2000;
 app.listen(port, () => {
-  console.log({
-    port,
-    link: `http://localhost:${port}/api`,
-    testRoutes: [`http://localhost:${port}/api/test`],
-  });
+  console.log(`Server is running on port ${port}`
+  //   {
+  //   port,
+  //   link: `http://localhost:${port}/api`,
+  //   testRoutes: [`http://localhost:${port}/api/test`],
+  // }
+);
 });

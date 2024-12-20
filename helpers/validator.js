@@ -66,6 +66,26 @@ const validateRoleId = (roleId) => {
   return errors;
 };
 
+const validateSupplier = (name, mobile, email, website, address) => {
+        let errors = [];
+        if (!name) {
+          errors.push({ field: "name", message: "Name is required." });
+        }
+        if (mobile && !/^\d{10}$/.test(mobile)) {
+          errors.push({ field: "mobile", message: "This mobile number is invalid." });
+        }
+        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          errors.push({ field: "email", message: "This email is invalid." });
+        }
+        if (website && !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(website)) {
+          errors.push({ field: "website", message: "This website URL is invalid." });
+        }
+        if (!address) {
+          errors.push({ field: "address", message: "Address is required." });
+        }
+        return errors;
+      };
+
 module.exports = {
   validateUsername,
   validateFullname,
@@ -73,4 +93,5 @@ module.exports = {
   validateMobile,
   validatePassword,
   validateRoleId,
+  validateSupplier
 };
