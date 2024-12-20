@@ -8,6 +8,8 @@ This project uses the following environment variables:
 | ----------------------------- | ------------------------------------| -----------------------------------------------|
 |DATABASE_URL           | Database connection URL            | ""      |
 |PORT           | Server port number            | 8000      |
+|ACCESS_TOKEN_SECRET|secret access token|"mysecreteaccesstoken"|
+|REFRESH_TOKEN_SECRET|secret refresh token|"mysecreterefreshtoken"|
 
 # Pre-requisites
 

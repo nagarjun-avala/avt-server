@@ -1,11 +1,12 @@
-const { Router } = require("express");
+const router = require("express").Router();
 const authCtrl = require("../controllers/authCtrl")
 
-const router = Router();
 
 
-router.post("/login", authCtrl.login); // http://localhost:8080/api/login
-router.post("/register", authCtrl.register); // http://localhost:8080/api/role/register
+router.post("/register", authCtrl.register); 
+router.post("/login", authCtrl.login); 
+router.post("/logout", authCtrl.logout); 
+router.post("/refresh_token", authCtrl.generateAccessToken); 
 /**
  * TODO: Create logout,refresh_token pages here
  */

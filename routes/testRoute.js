@@ -1,8 +1,6 @@
-const { Router } = require("express");
+const router = require("express").Router();
 const os = require("os");
 const version = process.env.npm_package_version;
-
-const router = Router();
 
 router.get("/", (req, res) => {
     const serverInfo = {
