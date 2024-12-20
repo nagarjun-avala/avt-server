@@ -57,7 +57,7 @@ model Product {
 }
 
 model Category {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String     @id @default(uuid()) @db.Uuid
   name     String     @unique
   parentId String?    @db.Uuid
   parent   Category?  @relation("CategoryToParent", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -70,10 +70,10 @@ model Category {
 }
 
 model Review {
-  id       String  @id @default(uuid()) @db.Uuid
-  rating   Int     @default(0) // Rating scale, e.g., 1-5
-  comment  String?
-  userId   String  @db.Uuid // Reference to the user who made the review
+  id        String  @id @default(uuid()) @db.Uuid
+  rating    Int     @default(0) // Rating scale, e.g., 1-5
+  comment   String?
+  userId    String  @db.Uuid // Reference to the user who made the review
   productId String  @db.Uuid // Foreign key to Product
 
   createdAt DateTime @default(now())
@@ -95,9 +95,10 @@ model User {
 }
 
 model Supplier {
-  id       String  @id @default(uuid()) @db.Uuid
+  id       String    @id @default(uuid()) @db.Uuid
   name     String
   contact  String
+  website  String
   address  Json
   products Product[]
 

@@ -1,52 +1,41 @@
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
+
+const {
+  validateUsername,
+  validateFullname,
+  validateEmail,
+  validateMobile,
+  validatePassword,
+  validateRoleId,
+} = require("../helpers/validator");
 
 const authCtrl = {
   register: async (req, res) => {
     try {
       var errors = [];
       const { username, fullname, email, mobile, password, roleId } = req.body;
-      if (!username)
-        errors = [
-          ...errors,
-          {
-            field: "username",
-            message: "This username is required.",
-          },
-        ];
-      if (!fullname)
-        errors = [
-          ...errors,
-          {
-            field: "fullname",
-            message: "This fullname is required.",
-          },
-        ];
-      if (!password)
-        errors = [
-          ...errors,
-          { field: "password", message: "This password is required." },
-        ];
-      if (!roleId)
-        errors = [
-          ...errors,
-          { field: "roleId", message: "This roleId is required." },
-        ];
+      let newUsername = username.replace(/\s/g, "_").toLowerCase();
+      errors = errors.concat(validateUsername(newUsername));
+      errors = errors.concat(validateFullname(fullname));
+      errors = errors.concat(validateEmail(email));
+      errors = errors.concat(validateMobile(mobile));
+      errors = errors.concat(validatePassword(password));
+      errors = errors.concat(validateRoleId(roleId));
+
       const existingAdmin = await prisma.admin.findFirst({
         where: {
-          username,
+          username: newUsername,
         },
       });
 
       if (existingAdmin)
-        errors = [
-          ...errors,
-          {
-            field: "username",
-            message: `This username isn't available. Please try another.`,
-          },
-        ];
+        errors.push({
+          field: "username",
+          message: `This username isn't available. Please try another.`,
+        });
 
       if (errors.length > 0)
         return res.status(400).json({
@@ -56,9 +45,9 @@ const authCtrl = {
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
-      const admin = await prisma.admin.create({
+      const newAdmin = await prisma.admin.create({
         data: {
-          username,
+          username: newUsername,
           fullname,
           email,
           mobile,
@@ -71,7 +60,7 @@ const authCtrl = {
         status: "success",
         message: "Admin Created successfully",
         admin: {
-          ...admin,
+          ...newAdmin,
           password: "",
         },
       });
@@ -89,21 +78,15 @@ const authCtrl = {
       var errors = [];
       const { username, password } = req.body;
       if (!username)
-        errors = [
-          ...errors,
-          {
-            field: "username",
-            message: "This username is required.",
-          },
-        ];
+        errors.push({
+          field: "username",
+          message: "This username is required.",
+        });
       if (!password)
-        errors = [
-          ...errors,
-          {
-            field: "password",
-            message: "This password is required.",
-          },
-        ];
+        errors.push({
+          field: "password",
+          message: "This password is required.",
+        });
 
       const admin = await prisma.admin.findFirst({
         where: {
@@ -115,20 +98,30 @@ const authCtrl = {
       });
 
       if (!admin)
-        errors = [
-          ...errors,
-          { field: "username", message: "Invalid username or password" },
-          { field: "password", message: "Invalid username or password" },
-        ];
+        errors.push(
+          {
+            field: "username",
+            message: "Invalid username or password",
+          },
+          {
+            field: "password",
+            message: "Invalid username or password",
+          }
+        );
 
       const isMatch = await bcrypt.compare(password, admin.password);
 
       if (!isMatch)
-        errors = [
-          ...errors,
-          { field: "username", message: "Invalid username or password" },
-          { field: "password", message: "Invalid username or password" },
-        ];
+        errors.push(
+          {
+            field: "username",
+            message: "Invalid username or password",
+          },
+          {
+            field: "password",
+            message: "Invalid username or password",
+          }
+        );
 
       if (errors.length > 0)
         return res.status(400).json({
@@ -143,8 +136,49 @@ const authCtrl = {
           admin: { ...admin, password: "" },
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
   },
+  logout: async (req, res) => {
+    try {
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
+  },
+  generateAccessToken: async (req, res) => {
+    try {
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
+  },
+};
+
+const createAccessToken = async (payload) => {
+  return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "10h",
+  });
+};
+
+const createRefreshToken = async (payload) => {
+  return await jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "24h",
+  });
 };
 
 module.exports = authCtrl;
