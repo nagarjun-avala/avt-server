@@ -26,7 +26,8 @@ async function main() {
   const dataDirectory = path.join(__dirname, "seedData");
 
   const orderedFileNames = [
-    // "role.json", //-Done
+    "role.json", //-Done
+    "category.json", //-Done
   ];
 
   // return null /** Please create Seed Data first According to databse model */
