@@ -19,6 +19,7 @@ app.use(cookieParser());
 
 /* ROUTEs & its IMPORTS */
 app.use("/api", require("./routes/authRoutes"));
+app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/role", require("./routes/roleRoutes"));
 app.use("/api/category", require("./routes/categoryRoutes"));
 app.use("/api/supplier", require("./routes/supplierRoutes"));
