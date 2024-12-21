@@ -1,5 +1,30 @@
 # AV TRADERS Server
 
+# Server Routes - LIVE
+- ### Authentication Routes
+
+  Create : <https://avt-server.onrender.com/api/register>
+
+  Login : <https://avt-server.onrender.com/api/login>
+
+  Logout : <https://avt-server.onrender.com/api/logout>
+
+  Refreshtoken : <https://avt-server.onrender.com/api/refresh_token>
+
+- ### Role Routes
+
+  Get All Roles : <https://avt-server.onrender.com/api/role>
+
+  Create : <https://avt-server.onrender.com/api/role/create>
+
+- ### Category Routes
+
+  Get All Categories : <https://avt-server.onrender.com/api/category>
+
+  Create : <https://avt-server.onrender.com/api/category/create>
+
+---
+
 # Environment vars
 
 This project uses the following environment variables:
@@ -47,6 +72,7 @@ npm start
   swagger Spec Endpoint : <http://localhost:8080/api-docs>
 
   swagger-ui  Endpoint : <http://localhost:8080/docs>
+
 
 # Node
 
