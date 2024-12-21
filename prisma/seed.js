@@ -28,6 +28,7 @@ async function main() {
   const orderedFileNames = [
     "role.json", //-Done
     "category.json", //-Done
+    "admin.json", //-Done
   ];
 
   // return null /** Please create Seed Data first According to databse model */
