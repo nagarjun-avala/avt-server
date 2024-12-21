@@ -1,0 +1,35 @@
+[
+  {
+    "name": "Adhesives",
+    "slug": "adhesives",
+    "parentId": null,
+    "level": 0,
+    "displayOrder": 1,
+    "isActive": true,
+    "description": "All types of industrial and natural adhesives.",
+    "createdBy": null,
+    "updatedBy": null
+  },
+  {
+    "name": "Dehydrated Products",
+    "slug": "dehydrated-products",
+    "parentId": null,
+    "level": 0,
+    "displayOrder": 2,
+    "isActive": true,
+    "description": "Dehydrated fruits, vegetables, and other products.",
+    "createdBy": null,
+    "updatedBy": null
+  },
+  {
+    "name": "Natural Soaps",
+    "slug": "natural-soaps",
+    "parentId": null,
+    "level": 0,
+    "displayOrder": 3,
+    "isActive": true,
+    "description": "Eco-friendly and handmade natural soaps.",
+    "createdBy": null,
+    "updatedBy": null
+  }
+]

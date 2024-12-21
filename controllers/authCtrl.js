@@ -3,27 +3,42 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 
-const {
-  validateUsername,
-  validateFullname,
-  validateEmail,
-  validateMobile,
-  validatePassword,
-  validateRoleId,
-} = require("../helpers/validator");
+const { validateAdminRegister } = require("../helpers/validator");
 
 const authCtrl = {
   register: async (req, res) => {
     try {
       var errors = [];
-      const { username, fullname, email, mobile, password, roleId } = req.body;
+      const {
+        username,
+        fullname,
+        email,
+        mobile,
+        password,
+        roleId,
+        isActive,
+        createdBy,
+      } = req.body;
+
       let newUsername = username.replace(/\s/g, "_").toLowerCase();
-      errors = errors.concat(validateUsername(newUsername));
-      errors = errors.concat(validateFullname(fullname));
-      errors = errors.concat(validateEmail(email));
-      errors = errors.concat(validateMobile(mobile));
-      errors = errors.concat(validatePassword(password));
-      errors = errors.concat(validateRoleId(roleId));
+
+      errors = errors.concat(
+        validateAdminRegister(
+          newUsername,
+          fullname,
+          email,
+          mobile,
+          password,
+          roleId
+        )
+      );
+
+      if (errors.length > 0) {
+        return res.status(400).json({
+          status: "error",
+          errors,
+        });
+      }
 
       const existingAdmin = await prisma.admin.findFirst({
         where: {
@@ -32,16 +47,14 @@ const authCtrl = {
       });
 
       if (existingAdmin) {
-        errors.push({
-          field: "username",
-          message: `This username isn't available. Please try another.`,
-        });
-      }
-
-      if (errors.length > 0) {
         return res.status(400).json({
           status: "error",
-          errors,
+          errors: [
+            {
+              field: "username",
+              message: "This username isn't available. Please try another.",
+            },
+          ],
         });
       }
 
@@ -55,6 +68,8 @@ const authCtrl = {
           mobile,
           password: hashedPassword,
           roleId,
+          isActive,
+          createdBy,
         },
       });
       const { password: trash, ...adminWithoutPassword } = newAdmin;
@@ -73,6 +88,7 @@ const authCtrl = {
       });
     }
   },
+
   login: async (req, res) => {
     try {
       var errors = [];
@@ -149,6 +165,7 @@ const authCtrl = {
       });
     }
   },
+
   logout: async (req, res) => {
     try {
       res.clearCookie("refreshtoken", {
@@ -167,6 +184,7 @@ const authCtrl = {
       });
     }
   },
+
   generateAccessToken: async (req, res) => {
     try {
       const rf_token = req.cookies.refreshtoken;
@@ -198,7 +216,7 @@ const authCtrl = {
           const access_token = await createAccessToken({
             id: admin.id,
           });
-          
+
           res.status(200).send({
             access_token,
             admin,
