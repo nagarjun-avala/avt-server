@@ -16,4 +16,7 @@ npm-debug.log*
 .env*
 
 # Vs code
-.vscode/*
+.vscode
+
+# prisma
+prisma/migrations/*
