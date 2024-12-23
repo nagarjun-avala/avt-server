@@ -107,7 +107,7 @@ const authCtrl = {
       const admin = await prisma.admin.findUnique({
         where: {
           username,
-        }
+        },
       });
 
       if (!admin) {
@@ -147,8 +147,8 @@ const authCtrl = {
       });
 
       const updatedAdmin = await prisma.admin.update({
-        where:{
-          id:admin.id
+        where: {
+          id: admin.id,
         },
         data: {
           lastLoginAt: new Date(),
@@ -156,8 +156,7 @@ const authCtrl = {
         include: {
           role: true,
         },
-      })
-
+      });
       const { password: trash, ...adminWithoutPassword } = updatedAdmin;
       return res.status(200).json({
         status: "success",
@@ -196,15 +195,18 @@ const authCtrl = {
 
   generateAccessToken: async (req, res) => {
     try {
-      const rf_token = req.cookies.refreshtoken;
-      if (!rf_token)
+      // TODO: Find a way to authenticate using refreshtoken
+      // const rf_token = req.cookies.refreshtoken;
+      const access_token = req.headers.authorization;
+      
+      if (!access_token)
         return res.status(400).json({
           status: "error",
-          message: "Please login now!",
+          message: "Unathorized\nAccess denied",
         });
       jwt.verify(
-        rf_token,
-        process.env.REFRESH_TOKEN_SECRET,
+        access_token,
+        process.env.ACCESS_TOKEN_SECRET,
         async (error, result) => {
           if (error)
             return res.status(400).json({
