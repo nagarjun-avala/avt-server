@@ -1,22 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const {
-  validateUsername,
-  validateFullname,
-  validateEmail,
-  validateMobile,
-  validatePassword,
-  validateRoleId,
-} = require("../helpers/validator");
-
 const categoryCtrl = {
   create: async (req, res) => {
     try {
       let errors = [];
       const {
         name,
-        slug,
         parentId,
         level,
         displayOrder,
@@ -35,8 +25,9 @@ const categoryCtrl = {
       }
 
       // Check for unique name
-      const existingCategory = await prisma.category.findFirst({
-        where: { name },
+      const slug = generateSlug(name)
+      const existingCategory = await prisma.category.findUnique({
+        where: { slug },
       });
 
       if (existingCategory) {
@@ -121,5 +112,9 @@ const categoryCtrl = {
     }
   },
 };
+
+const generateSlug = (name) => {
+return name.replace(/\s/g, "-").toLowerCase();
+}
 
 module.exports = categoryCtrl;

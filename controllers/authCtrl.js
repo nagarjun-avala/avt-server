@@ -40,7 +40,7 @@ const authCtrl = {
         });
       }
 
-      const existingAdmin = await prisma.admin.findFirst({
+      const existingAdmin = await prisma.admin.findUnique({
         where: {
           username: newUsername,
         },
@@ -104,13 +104,10 @@ const authCtrl = {
           message: "This password is required.",
         });
 
-      const admin = await prisma.admin.findFirst({
+      const admin = await prisma.admin.findUnique({
         where: {
           username,
-        },
-        include: {
-          role: true,
-        },
+        }
       });
 
       if (!admin) {
@@ -149,7 +146,19 @@ const authCtrl = {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
-      const { password: trash, ...adminWithoutPassword } = admin;
+      const updatedAdmin = await prisma.admin.update({
+        where:{
+          id:admin.id
+        },
+        data: {
+          lastLoginAt: new Date(),
+        },
+        include: {
+          role: true,
+        },
+      })
+
+      const { password: trash, ...adminWithoutPassword } = updatedAdmin;
       return res.status(200).json({
         status: "success",
         message: "Login Success",
@@ -203,7 +212,7 @@ const authCtrl = {
               message: "Please login now!",
             });
 
-          const admin = await prisma.admin.findFirst({
+          const admin = await prisma.admin.findUnique({
             where: {
               id: result.id,
             },
