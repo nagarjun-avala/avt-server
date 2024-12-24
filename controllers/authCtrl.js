@@ -200,16 +200,16 @@ const authCtrl = {
       const access_token = req.headers.authorization;
       
       if (!access_token)
-        return res.status(400).json({
+        return res.status(401).json({
           status: "error",
-          message: "Unathorized\nAccess denied",
+          message: "Unathorized",
         });
       jwt.verify(
         access_token,
         process.env.ACCESS_TOKEN_SECRET,
         async (error, result) => {
           if (error)
-            return res.status(400).json({
+            return res.status(401).json({
               status: "error",
               message: "Please login now!",
             });
