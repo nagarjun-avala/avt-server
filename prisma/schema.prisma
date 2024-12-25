@@ -7,126 +7,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id          String    @id @default(uuid()) @db.Uuid
-  username    String    @unique @db.VarChar(50)
-  fullname    String    @db.VarChar(100)
-  email       String?   @db.VarChar(100)
-  mobile      String?   @db.VarChar(15)
-  password    String
-  roleId      String    @db.Uuid
-  role        Role      @relation(fields: [roleId], references: [id])
-  isActive    Boolean   @default(true)
-  lastLoginAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  createdByAdminId String? @unique @db.Uuid
-  updatedByAdminId String? @db.Uuid
-
-  createdByAdmin Admin? @relation("AdminCreatedBy", fields: [createdByAdminId], references: [id])
-  updatedByAdmin Admin? @relation("AdminUpdatedBy", fields: [updatedByAdminId], references: [id])
-
-  createdRoles Role[] @relation("RoleCreatedBy")
-  updatedRoles Role[] @relation("RoleUpdatedBy")
-
-  createdAdmins Admin[] @relation("AdminCreatedBy")
-  updatedAdmins Admin[] @relation("AdminUpdatedBy")
-
-  @@index([roleId])
+enum RoleType {
+  ADMIN
+  USER
+  GUEST
 }
 
 model Role {
-  id          String    @id @default(uuid()) @db.Uuid
-  code        String    @unique @db.VarChar(50)
-  label       String    @unique @db.VarChar(100)
-  short       String    @db.VarChar(20)
-  description String?   @db.Text
-  isActive    Boolean   @default(true)
-  type        String    @default("custom") @db.VarChar(50)
-  priority    Int       @default(0)
-  activatedAt DateTime?
-  canDelete   Boolean   @default(true)
-  canUpdate   Boolean   @default(true)
-
-  createdById String? @db.Uuid
-  updatedById String? @db.Uuid
+  id               String    @id @default(uuid()) @db.Uuid
+  code             String    @unique @db.VarChar(50)
+  label            String    @unique @db.VarChar(100)
+  short            String    @db.VarChar(20)
+  description      String?   @db.Text
+  isActive         Boolean   @default(false)
+  type             RoleType  @default(ADMIN)
+  priority         Int       @default(0)
+  activatedAt      DateTime?
+  canDelete        Boolean   @default(false)
+  canUpdate        Boolean   @default(false)
+  canCreateProduct Boolean   @default(false) // New permission: Can create products
+  canViewReports   Boolean   @default(false) // New permission: Can view reports
+  createdById      String?   @db.Uuid
+  createdBy        Admin?    @relation("RoleCreatedBy", fields: [createdById], references: [id])
+  updatedById      String?   @db.Uuid
+  updatedBy        Admin?    @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
+  Admins           Admin[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy Admin? @relation("RoleCreatedBy", fields: [createdById], references: [id])
-  updatedBy Admin? @relation("RoleUpdatedBy", fields: [updatedById], references: [id])
-
-  Admins Admin[]
-
-  @@index([label]) // Optimized querying by label
-  @@index([priority]) // Optimized ordering by priority
+  @@index([label])
+  @@index([priority])
 }
 
-model Product {
-  id             String   @id @default(uuid()) @db.Uuid
-  barcodeId      String   @unique @db.Uuid
-  name           String
-  description    String?
-  categoryId     String   @db.Uuid
-  price          Float
-  stockQty       BigInt
-  stockThreshold Int      @default(0)
-  averageRating  Decimal  @default(0.0) @db.Decimal(2, 1)
-  reviewCount    Int      @default(0)
-  images         Json?
-  reviews        Review[]
-  supplierId     String   @db.Uuid
+model Admin {
+  id               String    @id @default(uuid()) @db.Uuid
+  avatar           String?
+  username         String    @unique @db.VarChar(50)
+  password         String
+  fullname         String    @db.VarChar(100)
+  email            String?   @db.VarChar(100)
+  mobile           String?   @db.VarChar(15)
+  roleId           String    @db.Uuid
+  role             Role      @relation(fields: [roleId], references: [id])
+  isActive         Boolean   @default(true)
+  lastLoginAt      DateTime?
+  theme            String    @default("light") @db.VarChar(20)
+  currency         String    @default("INR") @db.VarChar(10)
+  createdByAdminId String?   @unique @db.Uuid
+  createdByAdmin   Admin?    @relation("AdminCreatedBy", fields: [createdByAdminId], references: [id])
+  updatedByAdminId String?   @db.Uuid
+  updatedByAdmin   Admin?    @relation("AdminUpdatedBy", fields: [updatedByAdminId], references: [id])
+  createdRoles     Role[]    @relation("RoleCreatedBy")
+  updatedRoles     Role[]    @relation("RoleUpdatedBy")
+  createdAdmins    Admin[]   @relation("AdminCreatedBy")
+  updatedAdmins    Admin[]   @relation("AdminUpdatedBy")
 
-  category Category @relation("ProductToCategory", fields: [categoryId], references: [id])
-  supplier Supplier @relation(fields: [supplierId], references: [id])
-  barcode  Barcode  @relation(fields: [barcodeId], references: [id])
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  AuditLog            AuditLog[]
+  InventoryAdjustment InventoryAdjustment[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  InventoryTransaction InventoryTransaction[]
-}
-
-model Category {
-  id           String     @id @default(uuid()) @db.Uuid
-  name         String     @unique @db.VarChar(100)
-  slug         String     @unique
-  parentId     String?    @db.Uuid
-  parent       Category?  @relation("CategoryToParent", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  children     Category[] @relation("CategoryToParent")
-  level        Int        @default(0)
-  displayOrder Int        @default(0)
-  isActive     Boolean    @default(true)
-  description  String?    @db.Text
-
-  createdBy String? @db.Uuid
-  updatedBy String? @db.Uuid
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Product Product[] @relation("ProductToCategory")
-
-  @@unique([name, parentId]) // Enforce unique names within the same parent
-  @@index([parentId]) // Optimize hierarchical lookups
-}
-
-model Supplier {
-  id        String    @id @default(uuid()) @db.Uuid
-  name      String
-  mobile    String    @unique
-  email     String?   @unique
-  website   String
-  addressId String    @db.Uuid
-  address   Address?  @relation(fields: [addressId], references: [id])
-  products  Product[]
-  isActive  Boolean   @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@index([roleId])
 }
 
 model Review {
@@ -134,66 +76,152 @@ model Review {
   rating     Int     @default(0)
   comment    String?
   userId     String  @db.Uuid
+  user       User    @relation(fields: [userId], references: [id])
   productId  String  @db.Uuid
+  product    Product @relation(fields: [productId], references: [id])
   isVerified Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  product Product @relation(fields: [productId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+// Product model with stock threshold and new transaction logic
+model Product {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  barcodeId            String                 @unique @db.Uuid
+  barcode              Barcode                @relation(fields: [barcodeId], references: [id])
+  name                 String
+  description          String?
+  categoryId           String                 @db.Uuid
+  category             Category               @relation("ProductToCategory", fields: [categoryId], references: [id])
+  price                Float
+  stockQty             BigInt
+  stockThreshold       Int                    @default(0)
+  averageRating        Decimal                @default(0.0) @db.Decimal(2, 1)
+  reviewCount          Int                    @default(0)
+  images               Image[]
+  reviews              Review[]
+  supplierId           String                 @db.Uuid
+  supplier             Supplier               @relation(fields: [supplierId], references: [id])
+  InventoryTransaction InventoryTransaction[]
+
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  OrderProduct         OrderProduct[]
+  InventoryAdjustment  InventoryAdjustment[]
+  SupplierOrderProduct SupplierOrderProduct[]
+  ReturnProduct        ReturnProduct[]
+}
+
+model Image {
+  id        String  @id @default(uuid()) @db.Uuid
+  url       String  @db.Text // URL of the image
+  altText   String? @db.VarChar(255) // Optional alt text for the image
+  productId String  @db.Uuid
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id           String     @id @default(uuid()) @db.Uuid
+  name         String     @unique @db.VarChar(100)
+  slug         String     @unique
+  description  String?    @db.Text
+  parentId     String?    @db.Uuid
+  parent       Category?  @relation("CategoryToParent", fields: [parentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  children     Category[] @relation("CategoryToParent")
+  level        Int        @default(0)
+  displayOrder Int        @default(0)
+  isActive     Boolean    @default(true)
+  createdBy    String?    @db.Uuid
+  updatedBy    String?    @db.Uuid
+  products     Product[]  @relation("ProductToCategory")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([name, parentId])
+  @@index([parentId])
+}
+
+model Supplier {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  mobile    String    @unique
+  email     String?   @unique
+  website   String?
+  addressId String?   @db.Uuid
+  address   Address?  @relation(fields: [addressId], references: [id])
+  isActive  Boolean   @default(true)
+  products  Product[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  SupplierOrder SupplierOrder[]
+}
+
+enum BarcodeType {
+  UPC
+  EAN
+  ISBN
 }
 
 model Barcode {
-  id      String    @id @default(uuid()) @db.Uuid
-  code    String    @unique
-  ean13   String?   @unique
-  type    String    @default("UPC") @db.VarChar(10)
-  Product Product[]
+  id       String      @id @default(uuid()) @db.Uuid
+  code     String      @unique
+  ean13    String?     @unique
+  type     BarcodeType @default(UPC)
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model User {
-  id     String  @id @default(uuid()) @db.Uuid
-  email  String  @unique
-  name   String
-  mobile String?
+  id      String   @id @default(uuid()) @db.Uuid
+  email   String   @unique
+  name    String
+  mobile  String?
+  reviews Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Review    Review[]
+  Order     Order[]
 }
 
-// Embedded type for storing address details
-// Using JSON type in PostgreSQL to store the Address as JSON object
+enum InventoryTransactionType {
+  IN
+  OUT
+}
+
+// InventoryTransaction model with type IN/OUT for stock updates
 model InventoryTransaction {
-  id              String   @id @default(uuid()) @db.Uuid
-  productId       String   @db.Uuid
-  product         Product  @relation(fields: [productId], references: [id])
-  quantity        Int
-  type            String // e.g., "IN" for stock added, "OUT" for stock removed
-  transactionDate DateTime @default(now())
+  id        String                   @id @default(uuid()) @db.Uuid
+  productId String                   @db.Uuid
+  product   Product                  @relation(fields: [productId], references: [id])
+  quantity  Int
+  type      InventoryTransactionType @default(IN)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Address {
-  id         String   @id @default(uuid()) @db.Uuid
+  id         String     @id @default(uuid()) @db.Uuid
   street     String
-  cityId     String   @db.Uuid
-  stateId    String   @db.Uuid
-  countryId  String   @db.Uuid
+  cityId     String     @db.Uuid
+  city       City       @relation(fields: [cityId], references: [id])
+  stateId    String     @db.Uuid
+  state      State      @relation(fields: [stateId], references: [id])
+  countryId  String     @db.Uuid
+  country    Country    @relation(fields: [countryId], references: [id])
   postalCode String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  suppliers  Supplier[]
 
-  city     City       @relation(fields: [cityId], references: [id])
-  state    State      @relation(fields: [stateId], references: [id])
-  country  Country    @relation(fields: [countryId], references: [id])
-  Supplier Supplier[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([cityId])
   @@index([stateId])
@@ -201,44 +229,275 @@ model Address {
 }
 
 model Country {
-  id         String    @id @default(uuid()) @db.Uuid
-  name       String    @unique
-  code       String    @unique
-  mobileCode String    @unique
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  states     State[]
-  addresses  Address[]
+  id             String        @id @default(uuid()) @db.Uuid
+  name           String
+  iso3           String        @unique
+  iso2           String        @unique
+  phoneCode      String        @db.VarChar(10)
+  capital        String
+  currency       String
+  currencySymbol String
+  tld            String        @db.VarChar(10)
+  native         String
+  region         String
+  subregion      String
+  latitude       String        @db.VarChar(20)
+  longitude      String        @db.VarChar(20)
+  emoji          String        @db.VarChar(10)
+  emojiU         String
+  timezones      Timezone[]
+  translations   Translation[]
+  states         State[]
+  addresses      Address[]
+  cities         City[]
 
-  @@index([name])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model State {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  code      String
-  countryId String   @db.Uuid
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  countryId   String    @db.Uuid
+  country     Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryCode String    @db.VarChar(10)
+  stateCode   String    @db.VarChar(10)
+  latitude    String    @db.VarChar(20)
+  longitude   String    @db.VarChar(20)
+  cities      City[]
+  addresses   Address[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  country   Country   @relation(fields: [countryId], references: [id])
-  cities    City[]
-  addresses Address[]
-
-  @@unique([name, countryId]) // Ensures state names are unique within a country
-  @@index([countryId])
 }
 
 model City {
-  id        String   @id @default(uuid()) @db.Uuid
-  name      String
-  stateId   String   @db.Uuid
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  stateId     String    @db.Uuid
+  state       State     @relation(fields: [stateId], references: [id], onDelete: Cascade)
+  stateCode   String    @db.VarChar(10)
+  countryId   String    @db.Uuid
+  country     Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  countryCode String    @db.VarChar(10)
+  latitude    String    @db.VarChar(20)
+  longitude   String    @db.VarChar(20)
+  addresses   Address[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Timezone {
+  id            String  @id @default(uuid()) @db.Uuid
+  countryId     String  @db.Uuid
+  country       Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  zoneName      String
+  gmtOffset     Int
+  gmtOffsetName String
+  abbreviation  String
+  tzName        String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Translation {
+  id        String  @id @default(uuid()) @db.Uuid
+  countryId String  @db.Uuid
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  language  String
+  value     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  PAYPAL
+  BANK_TRANSFER
+  CASH
+}
+
+model PaymentTransaction {
+  id            String        @id @default(uuid()) @db.Uuid
+  amount        Float
+  paymentMethod PaymentMethod
+  transactionId String        @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  id             String         @id @default(uuid()) @db.Uuid
+  orderNumber    String         @unique
+  customerId     String         @db.Uuid
+  customer       User           @relation(fields: [customerId], references: [id])
+  status         OrderStatus    @default(PENDING)
+  paymentStatus  PaymentStatus  @default(PENDING)
+  shippingStatus ShippingStatus @default(PENDING)
+  totalAmount    Float
+  products       OrderProduct[]
+  Return         Return[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum ShippingStatus {
+  PENDING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model OrderProduct {
+  id        String  @id @default(uuid()) @db.Uuid
+  orderId   String  @db.Uuid
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String  @db.Uuid
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InventoryAdjustment {
+  id             String         @id @default(uuid()) @db.Uuid
+  productId      String         @db.Uuid
+  product        Product        @relation(fields: [productId], references: [id])
+  quantity       Int
+  adjustmentType AdjustmentType
+  reason         String?
+  createdBy      String         @db.Uuid
+  admin          Admin          @relation(fields: [createdBy], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AdjustmentType {
+  INCREASE
+  DECREASE
+}
+
+model SupplierOrder {
+  id          String                 @id @default(uuid()) @db.Uuid
+  orderNumber String                 @unique
+  supplierId  String                 @db.Uuid
+  supplier    Supplier               @relation(fields: [supplierId], references: [id])
+  status      OrderStatus            @default(PENDING)
+  totalAmount Float
+  products    SupplierOrderProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SupplierOrderProduct {
+  id              String        @id @default(uuid()) @db.Uuid
+  supplierOrderId String        @db.Uuid
+  productId       String        @db.Uuid
+  quantity        Int
+  price           Float
+  supplierOrder   SupplierOrder @relation(fields: [supplierOrderId], references: [id])
+  product         Product       @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Return {
+  id           String          @id @default(uuid()) @db.Uuid
+  orderId      String          @db.Uuid
+  order        Order           @relation(fields: [orderId], references: [id])
+  status       ReturnStatus    @default(PENDING)
+  returnReason String
+  totalRefund  Float
+  products     ReturnProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ReturnStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model ReturnProduct {
+  id        String  @id @default(uuid()) @db.Uuid
+  returnId  String  @db.Uuid
+  productId String  @db.Uuid
+  quantity  Int
+  product   Product @relation(fields: [productId], references: [id])
+  return    Return  @relation(fields: [returnId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Discount {
+  id          String   @id @default(uuid()) @db.Uuid
+  code        String   @unique
+  description String?
+  amount      Float
+  percentage  Boolean  @default(false) // Flag for percentage-based discount
+  startDate   DateTime
+  endDate     DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(uuid()) @db.Uuid
+  reportType  String // Type of report (e.g., "Sales Report", "Inventory Report")
+  startDate   DateTime
+  endDate     DateTime
+  generatedAt DateTime @default(now())
+  data        Json // Store report data in JSON format
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// AuditLog model to track changes
+model AuditLog {
+  id        String  @id @default(uuid()) @db.Uuid
+  entity    String // The name of the entity being changed (e.g., Product, Admin)
+  entityId  String // ID of the specific entity
+  action    String // Action performed (e.g., Created, Updated, Deleted)
+  details   String? // Additional details about the action
+  adminId   String  @db.Uuid // User who performed the action (Admin ID)
+  admin     Admin   @relation(fields: [adminId], references: [id])
+  ipAddress String? // IP address of the user
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  state     State     @relation(fields: [stateId], references: [id])
-  addresses Address[]
-
-  @@unique([name, stateId]) // Ensures city names are unique within a state
-  @@index([stateId])
+  @@index([entityId])
+  @@index([adminId])
 }

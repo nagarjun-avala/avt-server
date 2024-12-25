@@ -6,22 +6,13 @@ const generateSlug = (name) => name.replace(/\s+/g, "-").toLowerCase();
 const categoryController = {
   create: async (req, res) => {
     try {
-      const { name, parentId, level, displayOrder, isActive, description } =
-        req.body;
+      const { name, parentId, level, displayOrder, isActive, description } = req.body;
       if (!name) {
         return res.status(400).json({ error: "Name is required" });
       }
       const slug = generateSlug(name);
       const newCategory = await prisma.category.create({
-        data: {
-          name,
-          slug,
-          parentId,
-          level,
-          displayOrder,
-          isActive,
-          description,
-        },
+        data: { name, slug, parentId, level, displayOrder, isActive, description },
       });
       return res.status(201).json(newCategory);
     } catch (error) {
@@ -60,8 +51,7 @@ const categoryController = {
   update: async (req, res) => {
     try {
       const { id } = req.params;
-      const { name, parentId, level, displayOrder, isActive, description } =
-        req.body;
+      const { name, parentId, level, displayOrder, isActive, description } = req.body;
       const updatedCategory = await prisma.category.update({
         where: { id },
         data: { name, parentId, level, displayOrder, isActive, description },
