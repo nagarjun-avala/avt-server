@@ -1,15 +1,10 @@
 import { db } from "../lib/db";
 
-const productCtrl = {
-  createProduct: async (req, res) => {
+const orderProductCtrl = {
+  createOrderProduct: async (req, res) => {
     try {
-      const newProduct = await db.product.create(req.body);
-      res.status(201).json({
-        status: "success",
-        message: "Product created successfully",
-        newProduct,
-      });
-      return; // Ensure no further code is executed
+      const data = await db.orderProduct.create(req.body);
+      res.status(201).json(data);
     } catch (error) {
       console.error(error);
       return res.status(500).json({
@@ -19,30 +14,9 @@ const productCtrl = {
       });
     }
   },
-  getAllProducts: async (req, res) => {
+  getAllOrderProducts: async (req, res) => {
     try {
-      const products = await db.product.findAll({
-        include: {
-          category: true,
-        },
-      });
-      res.status(200).json({
-        status: "success",
-        products,
-      });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({
-        status: "error",
-        message: "Internal Server Error",
-        error: error.message,
-      });
-    }
-  },
-  getProductById: async (req, res) => {
-    try {
-      const data = await db.product.findByPk(req.params.id);
-      if (!data) return res.status(404).json({ message: "Product not found" });
+      const data = await db.orderProduct.findAll();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -53,14 +27,12 @@ const productCtrl = {
       });
     }
   },
-  updateProduct: async (req, res) => {
+  getOrderProductById: async (req, res) => {
     try {
-      const [updated] = await db.product.update(req.body, {
-        where: { id: req.params.id },
-      });
-      if (!updated)
-        return res.status(404).json({ message: "Product not found" });
-      res.status(200).json({ message: "Product updated successfully" });
+      const data = await db.orderProduct.findByPk(req.params.id);
+      if (!data)
+        return res.status(404).json({ message: "OrderProduct not found" });
+      res.status(200).json(data);
     } catch (error) {
       console.error(error);
       return res.status(500).json({
@@ -70,14 +42,31 @@ const productCtrl = {
       });
     }
   },
-  deleteProduct: async (req, res) => {
+  updateOrderProduct: async (req, res) => {
     try {
-      const deleted = await db.product.destroy({
+      const [updated] = await db.orderProduct.update(req.body, {
+        where: { id: req.params.id },
+      });
+      if (!updated)
+        return res.status(404).json({ message: "OrderProduct not found" });
+      res.status(200).json({ message: "OrderProduct updated successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+  deleteOrderProduct: async (req, res) => {
+    try {
+      const deleted = await db.orderProduct.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)
-        return res.status(404).json({ message: "Product not found" });
-      res.status(200).json({ message: "Product deleted successfully" });
+        return res.status(404).json({ message: "OrderProduct not found" });
+      res.status(200).json({ message: "OrderProduct deleted successfully" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({
@@ -88,4 +77,4 @@ const productCtrl = {
     }
   },
 };
-module.exports = productCtrl;
+module.exports = orderProductCtrl;

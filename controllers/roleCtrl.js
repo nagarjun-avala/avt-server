@@ -1,10 +1,9 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+import { validatorCreateRole } from "../helpers/validator";
+import { db } from "../lib/db";
 
 const roleCtrl = {
-  create: async (req, res) => {
+  createRole: async (req, res) => {
     try {
-      var errors = [];
       const {
         code,
         label,
@@ -18,46 +17,41 @@ const roleCtrl = {
         description,
         createdById,
       } = req.body;
-      if (!code)
-        errors = [
-          ...errors,
-          {
-            field: "code",
-            message: "This code is required.",
-          },
-        ];
-      if (!label)
-        errors = [
-          ...errors,
-          {
-            field: "label",
-            message: "This label is required.",
-          },
-        ];
-      if (!short)
-        errors = [
-          ...errors,
-          { field: "short", message: "This short is required." },
-        ];
-      const existingRole = await prisma.role.findFirst({
-        where: {
-          code,
-        },
-      });
-
-      if (existingRole)
-        errors = [
-          ...errors,
-          { field: "code", message: "Role with access code alredy exists" },
-        ];
+      const errors = validatorCreateRole(
+        code,
+        label,
+        short,
+        isActive,
+        type,
+        priority,
+        canDelete,
+        canUpdate,
+        activatedAt,
+        description,
+        createdById
+      );
 
       if (errors.length > 0)
         return res.status(400).json({
           status: "error",
           errors,
         });
+      const existingRole = await db.role.findFirst({
+        where: {
+          code,
+        },
+      });
 
-      const role = await prisma.role.create({
+      if (existingRole)
+        return res.status(400).json({
+          status: "error",
+          errors: {
+            field: "code",
+            message: "Role with access code alredy exists",
+          },
+        });
+
+      const newRole = await db.role.create({
         data: {
           code,
           label,
@@ -72,8 +66,7 @@ const roleCtrl = {
           createdById,
         },
       });
-
-      res.send({
+      res.status(201).json({
         status: "success",
         message: "Role Created successfully",
         role,
@@ -89,8 +82,7 @@ const roleCtrl = {
   },
   getAllRoles: async (req, res) => {
     try {
-      const roles = await prisma.role.findMany();
-
+      const roles = await db.role.findAll();
       return res.status(200).json({
         status: "success",
         message: "Roles data fetched successfully",
@@ -99,8 +91,60 @@ const roleCtrl = {
           roles,
         },
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
+  },
+  getRoleById: async (req, res) => {
+    try {
+      const data = await db.role.findByPk(req.params.id);
+      if (!data) return res.status(404).json({ message: "Role not found" });
+      res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
+  },
+  updateRole: async (req, res) => {
+    try {
+      const [updated] = await db.role.update(req.body, {
+        where: { id: req.params.id },
+      });
+      if (!updated) return res.status(404).json({ message: "Role not found" });
+      res.status(200).json({ message: "Role updated successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
+  },
+  deleteRole: async (req, res) => {
+    try {
+      const deleted = await db.role.destroy({
+        where: { id: req.params.id },
+      });
+      if (!deleted) return res.status(404).json({ message: "Role not found" });
+      res.status(200).json({ message: "Role deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error,
+      });
+    }
   },
 };
-
 module.exports = roleCtrl;
