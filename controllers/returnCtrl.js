@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const returnCtrl = {
   createReturn: async (req, res) => {
     try {
-      const data = await db.Return.create(req.body);
+      const data = await db.return.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const returnCtrl = {
   },
   getAllReturns: async (req, res) => {
     try {
-      const data = await db.Return.findAll();
+      const data = await db.return.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const returnCtrl = {
   },
   getReturnById: async (req, res) => {
     try {
-      const data = await db.Return.findByPk(req.params.id);
+      const data = await db.return.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Return not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const returnCtrl = {
   },
   updateReturn: async (req, res) => {
     try {
-      const [updated] = await db.Return.update(req.body, {
+      const [updated] = await db.return.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const returnCtrl = {
   },
   deleteReturn: async (req, res) => {
     try {
-      const deleted = await db.Return.destroy({
+      const deleted = await db.return.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

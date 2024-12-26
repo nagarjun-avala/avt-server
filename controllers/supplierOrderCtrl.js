@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const supplierOrderCtrl = {
   createSupplierOrder: async (req, res) => {
     try {
-      const data = await db.SupplierOrder.create(req.body);
+      const data = await db.supplierOrder.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const supplierOrderCtrl = {
   },
   getAllSupplierOrders: async (req, res) => {
     try {
-      const data = await db.SupplierOrder.findAll();
+      const data = await db.supplierOrder.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const supplierOrderCtrl = {
   },
   getSupplierOrderById: async (req, res) => {
     try {
-      const data = await db.SupplierOrder.findByPk(req.params.id);
+      const data = await db.supplierOrder.findByPk(req.params.id);
       if (!data)
         return res.status(404).json({ message: "SupplierOrder not found" });
       res.status(200).json(data);
@@ -29,7 +29,7 @@ const supplierOrderCtrl = {
   },
   updateSupplierOrder: async (req, res) => {
     try {
-      const [updated] = await db.SupplierOrder.update(req.body, {
+      const [updated] = await db.supplierOrder.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -41,7 +41,7 @@ const supplierOrderCtrl = {
   },
   deleteSupplierOrder: async (req, res) => {
     try {
-      const deleted = await db.SupplierOrder.destroy({
+      const deleted = await db.supplierOrder.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

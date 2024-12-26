@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const addressCtrl = {
   createAddress: async (req, res) => {
     try {
-      const data = await db.Address.create(req.body);
+      const data = await db.address.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const addressCtrl = {
   },
   getAllAddresss: async (req, res) => {
     try {
-      const data = await db.Address.findAll();
+      const data = await db.address.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const addressCtrl = {
   },
   getAddressById: async (req, res) => {
     try {
-      const data = await db.Address.findByPk(req.params.id);
+      const data = await db.address.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Address not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const addressCtrl = {
   },
   updateAddress: async (req, res) => {
     try {
-      const [updated] = await db.Address.update(req.body, {
+      const [updated] = await db.address.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const addressCtrl = {
   },
   deleteAddress: async (req, res) => {
     try {
-      const deleted = await db.Address.destroy({
+      const deleted = await db.address.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

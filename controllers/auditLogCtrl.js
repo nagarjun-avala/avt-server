@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const auditLogCtrl = {
   createAuditLog: async (req, res) => {
     try {
-      const data = await db.AuditLog.create(req.body);
+      const data = await db.auditLog.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const auditLogCtrl = {
   },
   getAllAuditLogs: async (req, res) => {
     try {
-      const data = await db.AuditLog.findAll();
+      const data = await db.auditLog.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const auditLogCtrl = {
   },
   getAuditLogById: async (req, res) => {
     try {
-      const data = await db.AuditLog.findByPk(req.params.id);
+      const data = await db.auditLog.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "AuditLog not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const auditLogCtrl = {
   },
   updateAuditLog: async (req, res) => {
     try {
-      const [updated] = await db.AuditLog.update(req.body, {
+      const [updated] = await db.auditLog.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const auditLogCtrl = {
   },
   deleteAuditLog: async (req, res) => {
     try {
-      const deleted = await db.AuditLog.destroy({
+      const deleted = await db.auditLog.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

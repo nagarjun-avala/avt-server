@@ -17,7 +17,7 @@ const supplierCtrl = {
         });
       }
 
-      const newSupplier = await db.Supplier.create({
+      const newSupplier = await db.supplier.create({
         data: {
           name,
           mobile,
@@ -65,7 +65,7 @@ const supplierCtrl = {
   },
   getSupplierById: async (req, res) => {
     try {
-      const data = await db.Supplier.findByPk(req.params.id);
+      const data = await db.supplier.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Supplier not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -79,7 +79,7 @@ const supplierCtrl = {
   },
   updateSupplier: async (req, res) => {
     try {
-      const [updated] = await db.Supplier.update(req.body, {
+      const [updated] = await db.supplier.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -96,7 +96,7 @@ const supplierCtrl = {
   },
   deleteSupplier: async (req, res) => {
     try {
-      const deleted = await db.Supplier.destroy({
+      const deleted = await db.supplier.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const barcodeCtrl = {
   createBarcode: async (req, res) => {
     try {
-      const data = await db.Barcode.create(req.body);
+      const data = await db.barcode.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const barcodeCtrl = {
   },
   getAllBarcodes: async (req, res) => {
     try {
-      const data = await db.Barcode.findAll();
+      const data = await db.barcode.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const barcodeCtrl = {
   },
   getBarcodeById: async (req, res) => {
     try {
-      const data = await db.Barcode.findByPk(req.params.id);
+      const data = await db.barcode.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Barcode not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const barcodeCtrl = {
   },
   updateBarcode: async (req, res) => {
     try {
-      const [updated] = await db.Barcode.update(req.body, {
+      const [updated] = await db.barcode.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const barcodeCtrl = {
   },
   deleteBarcode: async (req, res) => {
     try {
-      const deleted = await db.Barcode.destroy({
+      const deleted = await db.barcode.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

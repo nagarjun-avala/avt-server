@@ -7,7 +7,6 @@ const { validateAdminRegister } = require("../helpers/validator");
 const authCtrl = {
   register: async (req, res) => {
     try {
-      var errors = [];
       const {
         username,
         fullname,
@@ -21,15 +20,13 @@ const authCtrl = {
 
       let newUsername = username.replace(/\s/g, "_").toLowerCase();
 
-      errors = errors.concat(
-        validateAdminRegister(
-          newUsername,
-          fullname,
-          email,
-          mobile,
-          password,
-          roleId
-        )
+      const errors = validateAdminRegister(
+        newUsername,
+        fullname,
+        email,
+        mobile,
+        password,
+        roleId
       );
 
       if (errors.length > 0) {
@@ -48,12 +45,10 @@ const authCtrl = {
       if (existingAdmin) {
         return res.status(400).json({
           status: "error",
-          errors: [
-            {
-              field: "username",
-              message: "This username isn't available. Please try another.",
-            },
-          ],
+          errors: {
+            field: "username",
+            message: "This username isn't available. Please try another.",
+          },
         });
       }
 

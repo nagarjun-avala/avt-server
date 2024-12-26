@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const reviewCtrl = {
   createReview: async (req, res) => {
     try {
-      const data = await db.Review.create(req.body);
+      const data = await db.review.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const reviewCtrl = {
   },
   getAllReviews: async (req, res) => {
     try {
-      const data = await db.Review.findAll();
+      const data = await db.review.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const reviewCtrl = {
   },
   getReviewById: async (req, res) => {
     try {
-      const data = await db.Review.findByPk(req.params.id);
+      const data = await db.review.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Review not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const reviewCtrl = {
   },
   updateReview: async (req, res) => {
     try {
-      const [updated] = await db.Review.update(req.body, {
+      const [updated] = await db.review.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const reviewCtrl = {
   },
   deleteReview: async (req, res) => {
     try {
-      const deleted = await db.Review.destroy({
+      const deleted = await db.review.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

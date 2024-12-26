@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const supplierOrderProductCtrl = {
   createSupplierOrderProduct: async (req, res) => {
     try {
-      const data = await db.SupplierOrderProduct.create(req.body);
+      const data = await db.supplierOrderProduct.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const supplierOrderProductCtrl = {
   },
   getAllSupplierOrderProducts: async (req, res) => {
     try {
-      const data = await db.SupplierOrderProduct.findAll();
+      const data = await db.supplierOrderProduct.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const supplierOrderProductCtrl = {
   },
   getSupplierOrderProductById: async (req, res) => {
     try {
-      const data = await db.SupplierOrderProduct.findByPk(req.params.id);
+      const data = await db.supplierOrderProduct.findByPk(req.params.id);
       if (!data)
         return res
           .status(404)
@@ -31,7 +31,7 @@ const supplierOrderProductCtrl = {
   },
   updateSupplierOrderProduct: async (req, res) => {
     try {
-      const [updated] = await db.SupplierOrderProduct.update(req.body, {
+      const [updated] = await db.supplierOrderProduct.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -47,7 +47,7 @@ const supplierOrderProductCtrl = {
   },
   deleteSupplierOrderProduct: async (req, res) => {
     try {
-      const deleted = await db.SupplierOrderProduct.destroy({
+      const deleted = await db.supplierOrderProduct.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const inventoryTransactionCtrl = {
   createInventoryTransaction: async (req, res) => {
     try {
-      const data = await db.InventoryTransaction.create(req.body);
+      const data = await db.inventoryTransaction.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       console.error(error);
@@ -16,7 +16,7 @@ const inventoryTransactionCtrl = {
   },
   getAllInventoryTransactions: async (req, res) => {
     try {
-      const data = await db.InventoryTransaction.findAll();
+      const data = await db.inventoryTransaction.findAll();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -29,7 +29,7 @@ const inventoryTransactionCtrl = {
   },
   getInventoryTransactionById: async (req, res) => {
     try {
-      const data = await db.InventoryTransaction.findByPk(req.params.id);
+      const data = await db.inventoryTransaction.findByPk(req.params.id);
       if (!data)
         return res
           .status(404)
@@ -46,7 +46,7 @@ const inventoryTransactionCtrl = {
   },
   updateInventoryTransaction: async (req, res) => {
     try {
-      const [updated] = await db.InventoryTransaction.update(req.body, {
+      const [updated] = await db.inventoryTransaction.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -67,7 +67,7 @@ const inventoryTransactionCtrl = {
   },
   deleteInventoryTransaction: async (req, res) => {
     try {
-      const deleted = await db.InventoryTransaction.destroy({
+      const deleted = await db.inventoryTransaction.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

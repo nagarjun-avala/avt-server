@@ -82,7 +82,7 @@ const roleCtrl = {
   },
   getAllRoles: async (req, res) => {
     try {
-      const roles = await db.Role.findAll();
+      const roles = await db.role.findAll();
       return res.status(200).json({
         status: "success",
         message: "Roles data fetched successfully",
@@ -102,7 +102,7 @@ const roleCtrl = {
   },
   getRoleById: async (req, res) => {
     try {
-      const data = await db.Role.findByPk(req.params.id);
+      const data = await db.role.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Role not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -116,7 +116,7 @@ const roleCtrl = {
   },
   updateRole: async (req, res) => {
     try {
-      const [updated] = await db.Role.update(req.body, {
+      const [updated] = await db.role.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated) return res.status(404).json({ message: "Role not found" });
@@ -132,7 +132,7 @@ const roleCtrl = {
   },
   deleteRole: async (req, res) => {
     try {
-      const deleted = await db.Role.destroy({
+      const deleted = await db.role.destroy({
         where: { id: req.params.id },
       });
       if (!deleted) return res.status(404).json({ message: "Role not found" });

@@ -3,15 +3,15 @@ import { db } from "../lib/db";
 const countryCtrl = {
   createCountry: async (req, res) => {
     try {
-      const data = await db.Country.create(req.body);
+      const data = await db.country.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   },
-  getAllCountrys: async (req, res) => {
+  getAllCountries: async (req, res) => {
     try {
-      const data = await db.Country.findAll();
+      const data = await db.country.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const countryCtrl = {
   },
   getCountryById: async (req, res) => {
     try {
-      const data = await db.Country.findByPk(req.params.id);
+      const data = await db.country.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Country not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const countryCtrl = {
   },
   updateCountry: async (req, res) => {
     try {
-      const [updated] = await db.Country.update(req.body, {
+      const [updated] = await db.country.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const countryCtrl = {
   },
   deleteCountry: async (req, res) => {
     try {
-      const deleted = await db.Country.destroy({
+      const deleted = await db.country.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

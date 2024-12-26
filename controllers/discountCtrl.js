@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const discountCtrl = {
   createDiscount: async (req, res) => {
     try {
-      const data = await db.Discount.create(req.body);
+      const data = await db.discount.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const discountCtrl = {
   },
   getAllDiscounts: async (req, res) => {
     try {
-      const data = await db.Discount.findAll();
+      const data = await db.discount.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const discountCtrl = {
   },
   getDiscountById: async (req, res) => {
     try {
-      const data = await db.Discount.findByPk(req.params.id);
+      const data = await db.discount.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Discount not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const discountCtrl = {
   },
   updateDiscount: async (req, res) => {
     try {
-      const [updated] = await db.Discount.update(req.body, {
+      const [updated] = await db.discount.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -40,7 +40,7 @@ const discountCtrl = {
   },
   deleteDiscount: async (req, res) => {
     try {
-      const deleted = await db.Discount.destroy({
+      const deleted = await db.discount.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

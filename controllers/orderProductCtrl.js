@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const orderProductCtrl = {
   createOrderProduct: async (req, res) => {
     try {
-      const data = await db.OrderProduct.create(req.body);
+      const data = await db.orderProduct.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       console.error(error);
@@ -16,7 +16,7 @@ const orderProductCtrl = {
   },
   getAllOrderProducts: async (req, res) => {
     try {
-      const data = await db.OrderProduct.findAll();
+      const data = await db.orderProduct.findAll();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -29,7 +29,7 @@ const orderProductCtrl = {
   },
   getOrderProductById: async (req, res) => {
     try {
-      const data = await db.OrderProduct.findByPk(req.params.id);
+      const data = await db.orderProduct.findByPk(req.params.id);
       if (!data)
         return res.status(404).json({ message: "OrderProduct not found" });
       res.status(200).json(data);
@@ -44,7 +44,7 @@ const orderProductCtrl = {
   },
   updateOrderProduct: async (req, res) => {
     try {
-      const [updated] = await db.OrderProduct.update(req.body, {
+      const [updated] = await db.orderProduct.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -61,7 +61,7 @@ const orderProductCtrl = {
   },
   deleteOrderProduct: async (req, res) => {
     try {
-      const deleted = await db.OrderProduct.destroy({
+      const deleted = await db.orderProduct.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

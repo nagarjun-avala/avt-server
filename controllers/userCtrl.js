@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const userCtrl = {
   createUser: async (req, res) => {
     try {
-      const data = await db.User.create(req.body);
+      const data = await db.user.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const userCtrl = {
   },
   getAllUsers: async (req, res) => {
     try {
-      const data = await db.User.findAll();
+      const data = await db.user.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const userCtrl = {
   },
   getUserById: async (req, res) => {
     try {
-      const data = await db.User.findByPk(req.params.id);
+      const data = await db.user.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "User not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const userCtrl = {
   },
   updateUser: async (req, res) => {
     try {
-      const [updated] = await db.User.update(req.body, {
+      const [updated] = await db.user.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated) return res.status(404).json({ message: "User not found" });
@@ -39,7 +39,7 @@ const userCtrl = {
   },
   deleteUser: async (req, res) => {
     try {
-      const deleted = await db.User.destroy({
+      const deleted = await db.user.destroy({
         where: { id: req.params.id },
       });
       if (!deleted) return res.status(404).json({ message: "User not found" });

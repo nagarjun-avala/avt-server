@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const stateCtrl = {
   createState: async (req, res) => {
     try {
-      const data = await db.State.create(req.body);
+      const data = await db.state.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const stateCtrl = {
   },
   getAllStates: async (req, res) => {
     try {
-      const data = await db.State.findAll();
+      const data = await db.state.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const stateCtrl = {
   },
   getStateById: async (req, res) => {
     try {
-      const data = await db.State.findByPk(req.params.id);
+      const data = await db.state.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "State not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -28,7 +28,7 @@ const stateCtrl = {
   },
   updateState: async (req, res) => {
     try {
-      const [updated] = await db.State.update(req.body, {
+      const [updated] = await db.state.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated) return res.status(404).json({ message: "State not found" });
@@ -39,7 +39,7 @@ const stateCtrl = {
   },
   deleteState: async (req, res) => {
     try {
-      const deleted = await db.State.destroy({
+      const deleted = await db.state.destroy({
         where: { id: req.params.id },
       });
       if (!deleted) return res.status(404).json({ message: "State not found" });

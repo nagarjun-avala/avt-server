@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const translationCtrl = {
   createTranslation: async (req, res) => {
     try {
-      const data = await db.Translation.create(req.body);
+      const data = await db.translation.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -11,7 +11,7 @@ const translationCtrl = {
   },
   getAllTranslations: async (req, res) => {
     try {
-      const data = await db.Translation.findAll();
+      const data = await db.translation.findAll();
       res.status(200).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -19,7 +19,7 @@ const translationCtrl = {
   },
   getTranslationById: async (req, res) => {
     try {
-      const data = await db.Translation.findByPk(req.params.id);
+      const data = await db.translation.findByPk(req.params.id);
       if (!data)
         return res.status(404).json({ message: "Translation not found" });
       res.status(200).json(data);
@@ -29,7 +29,7 @@ const translationCtrl = {
   },
   updateTranslation: async (req, res) => {
     try {
-      const [updated] = await db.Translation.update(req.body, {
+      const [updated] = await db.translation.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -41,7 +41,7 @@ const translationCtrl = {
   },
   deleteTranslation: async (req, res) => {
     try {
-      const deleted = await db.Translation.destroy({
+      const deleted = await db.translation.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

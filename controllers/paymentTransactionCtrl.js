@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const paymentTransactionCtrl = {
   createPaymentTransaction: async (req, res) => {
     try {
-      const data = await db.PaymentTransaction.create(req.body);
+      const data = await db.paymentTransaction.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       console.error(error);
@@ -16,7 +16,7 @@ const paymentTransactionCtrl = {
   },
   getAllPaymentTransactions: async (req, res) => {
     try {
-      const data = await db.PaymentTransaction.findAll();
+      const data = await db.paymentTransaction.findAll();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -29,7 +29,7 @@ const paymentTransactionCtrl = {
   },
   getPaymentTransactionById: async (req, res) => {
     try {
-      const data = await db.PaymentTransaction.findByPk(req.params.id);
+      const data = await db.paymentTransaction.findByPk(req.params.id);
       if (!data)
         return res
           .status(404)
@@ -46,7 +46,7 @@ const paymentTransactionCtrl = {
   },
   updatePaymentTransaction: async (req, res) => {
     try {
-      const [updated] = await db.PaymentTransaction.update(req.body, {
+      const [updated] = await db.paymentTransaction.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -67,7 +67,7 @@ const paymentTransactionCtrl = {
   },
   deletePaymentTransaction: async (req, res) => {
     try {
-      const deleted = await db.PaymentTransaction.destroy({
+      const deleted = await db.paymentTransaction.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)

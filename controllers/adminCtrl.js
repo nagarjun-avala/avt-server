@@ -3,7 +3,7 @@ const { db } = require("../lib/db");
 const adminCtrl = {
   createAdmin: async (req, res) => {
     try {
-      const data = await db.Admin.create(req.body);
+      const data = await db.admin.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -45,7 +45,7 @@ const adminCtrl = {
   },
   getAdminById: async (req, res) => {
     try {
-      const data = await db.Admin.findByPk(req.params.id);
+      const data = await db.admin.findByPk(req.params.id);
       if (!data) return res.status(404).json({ message: "Admin not found" });
       res.status(200).json(data);
     } catch (error) {
@@ -54,7 +54,7 @@ const adminCtrl = {
   },
   updateAdmin: async (req, res) => {
     try {
-      const [updated] = await db.Admin.update(req.body, {
+      const [updated] = await db.admin.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated) return res.status(404).json({ message: "Admin not found" });
@@ -65,7 +65,7 @@ const adminCtrl = {
   },
   deleteAdmin: async (req, res) => {
     try {
-      const deleted = await db.Admin.destroy({
+      const deleted = await db.admin.destroy({
         where: { id: req.params.id },
       });
       if (!deleted) return res.status(404).json({ message: "Admin not found" });

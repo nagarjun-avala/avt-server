@@ -3,7 +3,7 @@ import { db } from "../lib/db";
 const inventoryAdjustmentCtrl = {
   createInventoryAdjustment: async (req, res) => {
     try {
-      const data = await db.InventoryAdjustment.create(req.body);
+      const data = await db.inventoryAdjustment.create(req.body);
       res.status(201).json(data);
     } catch (error) {
       console.error(error);
@@ -16,7 +16,7 @@ const inventoryAdjustmentCtrl = {
   },
   getAllInventoryAdjustments: async (req, res) => {
     try {
-      const data = await db.InventoryAdjustment.findAll();
+      const data = await db.inventoryAdjustment.findAll();
       res.status(200).json(data);
     } catch (error) {
       console.error(error);
@@ -29,7 +29,7 @@ const inventoryAdjustmentCtrl = {
   },
   getInventoryAdjustmentById: async (req, res) => {
     try {
-      const data = await db.InventoryAdjustment.findByPk(req.params.id);
+      const data = await db.inventoryAdjustment.findByPk(req.params.id);
       if (!data)
         return res
           .status(404)
@@ -46,7 +46,7 @@ const inventoryAdjustmentCtrl = {
   },
   updateInventoryAdjustment: async (req, res) => {
     try {
-      const [updated] = await db.InventoryAdjustment.update(req.body, {
+      const [updated] = await db.inventoryAdjustment.update(req.body, {
         where: { id: req.params.id },
       });
       if (!updated)
@@ -67,7 +67,7 @@ const inventoryAdjustmentCtrl = {
   },
   deleteInventoryAdjustment: async (req, res) => {
     try {
-      const deleted = await db.InventoryAdjustment.destroy({
+      const deleted = await db.inventoryAdjustment.destroy({
         where: { id: req.params.id },
       });
       if (!deleted)
