@@ -1,4 +1,4 @@
-import { db } from "../lib/db";
+const { db } = require("../lib/db");
 
 const reviewCtrl = {
   createReview: async (req, res) => {
