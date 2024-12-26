@@ -1,5 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { db } = require("../lib/db");
 
 const generateSlug = (name) => name.replace(/\s+/g, "-").toLowerCase();
 
@@ -12,7 +11,7 @@ const categoryController = {
         return res.status(400).json({ error: "Name is required" });
       }
       const slug = generateSlug(name);
-      const newCategory = await prisma.category.create({
+      const newCategory = await db.category.create({
         data: {
           name,
           slug,
@@ -32,12 +31,12 @@ const categoryController = {
   getAll: async (req, res) => {
     try {
       const { page = 1, limit = 10 } = req.query;
-      const categories = await prisma.category.findMany({
+      const categories = await db.category.findMany({
         skip: (page - 1) * limit,
         take: parseInt(limit),
         include: { parent: true, children: true },
       });
-      const total = await prisma.category.count();
+      const total = await db.category.count();
       return res.status(200).json({ data: categories, total });
     } catch (error) {
       console.error(error);
@@ -47,7 +46,7 @@ const categoryController = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const category = await prisma.category.findUnique({ where: { id } });
+      const category = await db.category.findUnique({ where: { id } });
       if (!category) {
         return res.status(404).json({ error: "Category not found" });
       }
@@ -62,7 +61,7 @@ const categoryController = {
       const { id } = req.params;
       const { name, parentId, level, displayOrder, isActive, description } =
         req.body;
-      const updatedCategory = await prisma.category.update({
+      const updatedCategory = await db.category.update({
         where: { id },
         data: { name, parentId, level, displayOrder, isActive, description },
       });
@@ -75,7 +74,7 @@ const categoryController = {
   delete: async (req, res) => {
     try {
       const { id } = req.params;
-      await prisma.category.delete({ where: { id } });
+      await db.category.delete({ where: { id } });
       return res.status(200).json({ message: "Category deleted successfully" });
     } catch (error) {
       console.error(error);

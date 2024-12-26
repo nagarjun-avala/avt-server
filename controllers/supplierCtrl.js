@@ -1,14 +1,13 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { db } = require("../lib/db");
 
 const { validateSupplier } = require("../helpers/validator");
 
 const supplierCtrl = {
-  create: async (req, res) => {
+  createSupplier: async (req, res) => {
     try {
-      let errors = [];
       const { name, mobile, email, website, addressId, isActive } = req.body;
-      errors = validateSupplier(name, mobile, email, website);
+
+      const errors = validateSupplier(name, mobile, email, website);
 
       if (errors.length > 0) {
         return res.status(400).json({
@@ -18,7 +17,7 @@ const supplierCtrl = {
         });
       }
 
-      const newSupplier = await prisma.supplier.create({
+      const newSupplier = await db.Supplier.create({
         data: {
           name,
           mobile,
@@ -28,7 +27,6 @@ const supplierCtrl = {
           isActive,
         },
       });
-
       res.status(201).json({
         status: "success",
         message: "Supplier created successfully",
@@ -46,7 +44,7 @@ const supplierCtrl = {
   },
   getAllSuppliers: async (req, res) => {
     try {
-      const suppliers = await prisma.supplier.findMany({
+      const suppliers = await db.supplier.findAll({
         include: {
           products: true,
         },
@@ -56,6 +54,54 @@ const supplierCtrl = {
         status: "success",
         suppliers,
       });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+  getSupplierById: async (req, res) => {
+    try {
+      const data = await db.Supplier.findByPk(req.params.id);
+      if (!data) return res.status(404).json({ message: "Supplier not found" });
+      res.status(200).json(data);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+  updateSupplier: async (req, res) => {
+    try {
+      const [updated] = await db.Supplier.update(req.body, {
+        where: { id: req.params.id },
+      });
+      if (!updated)
+        return res.status(404).json({ message: "Supplier not found" });
+      res.status(200).json({ message: "Supplier updated successfully" });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: "error",
+        message: "Internal Server Error",
+        error: error.message,
+      });
+    }
+  },
+  deleteSupplier: async (req, res) => {
+    try {
+      const deleted = await db.Supplier.destroy({
+        where: { id: req.params.id },
+      });
+      if (!deleted)
+        return res.status(404).json({ message: "Supplier not found" });
+      res.status(200).json({ message: "Supplier deleted successfully" });
     } catch (error) {
       console.error(error);
       return res.status(500).json({

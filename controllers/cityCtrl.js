@@ -1,0 +1,52 @@
+import { db } from "../lib/db";
+
+const cityCtrl = {
+  createCity: async (req, res) => {
+    try {
+      const data = await db.City.create(req.body);
+      res.status(201).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  getAllCitys: async (req, res) => {
+    try {
+      const data = await db.City.findAll();
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  getCityById: async (req, res) => {
+    try {
+      const data = await db.City.findByPk(req.params.id);
+      if (!data) return res.status(404).json({ message: "City not found" });
+      res.status(200).json(data);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  updateCity: async (req, res) => {
+    try {
+      const [updated] = await db.City.update(req.body, {
+        where: { id: req.params.id },
+      });
+      if (!updated) return res.status(404).json({ message: "City not found" });
+      res.status(200).json({ message: "City updated successfully" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+  deleteCity: async (req, res) => {
+    try {
+      const deleted = await db.City.destroy({
+        where: { id: req.params.id },
+      });
+      if (!deleted) return res.status(404).json({ message: "City not found" });
+      res.status(200).json({ message: "City deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+};
+module.exports = cityCtrl;

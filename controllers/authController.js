@@ -1,15 +1,14 @@
-const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const prisma = new PrismaClient();
+const { db } = require("../lib/db");
 const SECRET_KEY = "your-secret-key"; // Replace with your actual secret key
 
 const authController = {
   login: async (req, res) => {
     try {
       const { username, password } = req.body;
-      const admin = await prisma.admin.findUnique({ where: { username } });
+      const admin = await db.admin.findUnique({ where: { username } });
       if (!admin) {
         return res.status(404).json({ error: "Admin not found" });
       }
@@ -30,7 +29,7 @@ const authController = {
     try {
       const { username, password, fullname, email, mobile, roleId } = req.body;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newAdmin = await prisma.admin.create({
+      const newAdmin = await db.admin.create({
         data: {
           username,
           password: hashedPassword,
