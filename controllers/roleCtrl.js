@@ -1,5 +1,5 @@
-import { validatorCreateRole } from "../helpers/validator";
-import { db } from "../lib/db";
+const { validatorCreateRole } = require("../helpers/validator");
+const { db } = require("../lib/db");
 
 const roleCtrl = {
   createRole: async (req, res) => {

@@ -1,4 +1,4 @@
-import { db } from "../lib/db";
+const { db } = require("../lib/db");
 
 const auditLogCtrl = {
   createAuditLog: async (req, res) => {
