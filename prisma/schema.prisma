@@ -63,10 +63,10 @@ model Admin {
   createdAdmins    Admin[]   @relation("AdminCreatedBy")
   updatedAdmins    Admin[]   @relation("AdminUpdatedBy")
 
-  createdAt           DateTime              @default(now())
-  updatedAt           DateTime              @updatedAt
   AuditLog            AuditLog[]
   InventoryAdjustment InventoryAdjustment[]
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
 
   @@index([roleId])
 }
@@ -104,13 +104,13 @@ model Product {
   supplierId           String                 @db.Uuid
   supplier             Supplier               @relation(fields: [supplierId], references: [id])
   InventoryTransaction InventoryTransaction[]
-
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
   OrderProduct         OrderProduct[]
   InventoryAdjustment  InventoryAdjustment[]
   SupplierOrderProduct SupplierOrderProduct[]
   ReturnProduct        ReturnProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Image {
@@ -147,19 +147,19 @@ model Category {
 }
 
 model Supplier {
-  id        String    @id @default(uuid()) @db.Uuid
-  name      String
-  mobile    String    @unique
-  email     String?   @unique
-  website   String?
-  addressId String?   @db.Uuid
-  address   Address?  @relation(fields: [addressId], references: [id])
-  isActive  Boolean   @default(true)
-  products  Product[]
-
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id            String          @id @default(uuid()) @db.Uuid
+  name          String
+  mobile        String          @unique
+  email         String?         @unique
+  website       String?
+  addressId     String?         @db.Uuid
+  address       Address?        @relation(fields: [addressId], references: [id])
+  isActive      Boolean         @default(true)
+  products      Product[]
   SupplierOrder SupplierOrder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum BarcodeType {
@@ -185,10 +185,10 @@ model User {
   name    String
   mobile  String?
   reviews Review[]
+  Order   Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Order     Order[]
 }
 
 enum InventoryTransactionType {

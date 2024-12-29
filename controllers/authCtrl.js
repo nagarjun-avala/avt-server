@@ -147,6 +147,7 @@ const authCtrl = {
           id: admin.id,
         },
         data: {
+          ...admin,
           lastLoginAt: new Date(),
         },
         include: {
