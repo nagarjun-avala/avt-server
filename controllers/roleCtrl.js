@@ -82,7 +82,7 @@ const roleCtrl = {
   },
   getAllRoles: async (req, res) => {
     try {
-      const roles = await db.role.findAll();
+      const roles = await db.role.findMany();
       return res.status(200).json({
         status: "success",
         message: "Roles data fetched successfully",
