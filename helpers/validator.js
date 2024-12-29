@@ -77,7 +77,30 @@ const validateAdminRegister = (
   return errors;
 };
 
+const validatorCreateRole = (
+  code,
+  label,
+  short,
+  isActive,
+  type,
+  priority,
+  canDelete,
+  canUpdate,
+  activatedAt,
+  description,
+  createdById
+) => {
+  let errors = [];
+
+  return errors;
+};
+
+// ? Testing New way to create validators
+const AdminValidator = {};
+
 module.exports = {
+  AdminValidator,
   validateAdminRegister,
   validateSupplier,
+  validatorCreateRole,
 };

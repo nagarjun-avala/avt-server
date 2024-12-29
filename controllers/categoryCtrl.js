@@ -1,120 +1,86 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const { db } = require("../lib/db");
 
-const categoryCtrl = {
+const generateSlug = (name) => name.replace(/\s+/g, "-").toLowerCase();
+
+const categoryController = {
   create: async (req, res) => {
     try {
-      let errors = [];
-      const {
-        name,
-        parentId,
-        level,
-        displayOrder,
-        isActive,
-        description,
-        createdBy,
-        updatedBy,
-      } = req.body;
-
-      // Validate name
-      if (!name || typeof name !== "string" || name.trim().length === 0) {
-        errors.push({
-          field: "name",
-          message: "Category name is required and must be a non-empty string.",
-        });
+      const { name, parentId, level, displayOrder, isActive, description } =
+        req.body;
+      if (!name) {
+        return res.status(400).json({ error: "Name is required" });
       }
-
-      // Check for unique name
-      const slug = generateSlug(name)
-      const existingCategory = await prisma.category.findUnique({
-        where: { slug },
-      });
-
-      if (existingCategory) {
-        errors.push({
-          field: "name",
-          message: `A category with the name "${name}" already exists.`,
-        });
-      }
-
-      // Validate parentId if provided
-      if (parentId) {
-        const parentCategory = await prisma.category.findUnique({
-          where: { id: parentId },
-        });
-
-        if (!parentCategory) {
-          errors.push({
-            field: "parentId",
-            message: `Parent category with ID "${parentId}" does not exist.`,
-          });
-        }
-      }
-
-      // If there are errors, return a 400 response
-      if (errors.length > 0) {
-        return res.status(400).json({
-          status: "error",
-          errors,
-        });
-      }
-
-      // Create the new category
-      const newCategory = await prisma.category.create({
+      const slug = generateSlug(name);
+      const newCategory = await db.category.create({
         data: {
           name,
           slug,
-          parentId: parentId || null,
+          parentId,
           level,
           displayOrder,
           isActive,
           description,
-          createdBy,
-          updatedBy,
         },
       });
-
-      res.status(201).json({
-        status: "success",
-        message: "Category created successfully",
-        category: newCategory,
-      });
-      return; // Ensure no further code is executed
+      return res.status(201).json(newCategory);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
-        status: "error",
-        message: "Internal Server Error",
-        error: error.message,
-      });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   },
-  getAllCategories: async (req, res) => {
+  getAll: async (req, res) => {
     try {
-      const categories = await prisma.category.findMany({
-        include: {
-          parent: true,
-          children: true,
-        },
+      const { page = 1, limit = 10 } = req.query;
+      const categories = await db.category.findMany({
+        skip: (page - 1) * limit,
+        take: parseInt(limit),
+        include: { parent: true, children: true },
       });
-
-      res.status(200).json({
-        status: "success",
-        categories,
-      });
+      const total = await db.category.count();
+      return res.status(200).json({ data: categories, total });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({
-        status: "error",
-        message: "Internal Server Error",
-        error: error.message,
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  getById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const category = await db.category.findUnique({ where: { id } });
+      if (!category) {
+        return res.status(404).json({ error: "Category not found" });
+      }
+      return res.status(200).json(category);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  update: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, parentId, level, displayOrder, isActive, description } =
+        req.body;
+      const updatedCategory = await db.category.update({
+        where: { id },
+        data: { name, parentId, level, displayOrder, isActive, description },
       });
+      return res.status(200).json(updatedCategory);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  },
+  delete: async (req, res) => {
+    try {
+      const { id } = req.params;
+      await db.category.delete({ where: { id } });
+      return res.status(200).json({ message: "Category deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal Server Error" });
     }
   },
 };
 
-const generateSlug = (name) => {
-return name.replace(/\s/g, "-").toLowerCase();
-}
-
-module.exports = categoryCtrl;
+module.exports = categoryController;

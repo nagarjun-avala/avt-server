@@ -1,14 +1,12 @@
-const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const prisma = new PrismaClient();
+const { db } = require("../lib/db");
 
 const { validateAdminRegister } = require("../helpers/validator");
 
 const authCtrl = {
   register: async (req, res) => {
     try {
-      var errors = [];
       const {
         username,
         fullname,
@@ -22,15 +20,13 @@ const authCtrl = {
 
       let newUsername = username.replace(/\s/g, "_").toLowerCase();
 
-      errors = errors.concat(
-        validateAdminRegister(
-          newUsername,
-          fullname,
-          email,
-          mobile,
-          password,
-          roleId
-        )
+      const errors = validateAdminRegister(
+        newUsername,
+        fullname,
+        email,
+        mobile,
+        password,
+        roleId
       );
 
       if (errors.length > 0) {
@@ -40,7 +36,7 @@ const authCtrl = {
         });
       }
 
-      const existingAdmin = await prisma.admin.findUnique({
+      const existingAdmin = await db.admin.findUnique({
         where: {
           username: newUsername,
         },
@@ -49,18 +45,16 @@ const authCtrl = {
       if (existingAdmin) {
         return res.status(400).json({
           status: "error",
-          errors: [
-            {
-              field: "username",
-              message: "This username isn't available. Please try another.",
-            },
-          ],
+          errors: {
+            field: "username",
+            message: "This username isn't available. Please try another.",
+          },
         });
       }
 
       const hashedPassword = await bcrypt.hash(password, 12);
 
-      const newAdmin = await prisma.admin.create({
+      const newAdmin = await db.admin.create({
         data: {
           username: newUsername,
           fullname,
@@ -104,7 +98,7 @@ const authCtrl = {
           message: "This password is required.",
         });
 
-      const admin = await prisma.admin.findUnique({
+      const admin = await db.admin.findUnique({
         where: {
           username,
         },
@@ -142,11 +136,13 @@ const authCtrl = {
 
       res.cookie("refreshtoken", refresh_token, {
         httpOnly: true,
+        secure: false,
+        sameSite: "lax",
         path: "/api/refresh_token",
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
-      const updatedAdmin = await prisma.admin.update({
+      const updatedAdmin = await db.admin.update({
         where: {
           id: admin.id,
         },
@@ -198,23 +194,23 @@ const authCtrl = {
       // TODO: Find a way to authenticate using refreshtoken
       // const rf_token = req.cookies.refreshtoken;
       const access_token = req.headers.authorization;
-      
+
       if (!access_token)
-        return res.status(400).json({
+        return res.status(401).json({
           status: "error",
-          message: "Unathorized\nAccess denied",
+          message: "Unathorized",
         });
       jwt.verify(
         access_token,
         process.env.ACCESS_TOKEN_SECRET,
         async (error, result) => {
           if (error)
-            return res.status(400).json({
+            return res.status(401).json({
               status: "error",
               message: "Please login now!",
             });
 
-          const admin = await prisma.admin.findUnique({
+          const admin = await db.admin.findUnique({
             where: {
               id: result.id,
             },
