@@ -11,7 +11,7 @@ const adminCtrl = {
   },
   getAllAdmins: async (req, res) => {
     try {
-      const admins = await db.admin.findAll({
+      const admins = await db.admin.findMany({
         include: {
           role: true,
           createdRoles: true,

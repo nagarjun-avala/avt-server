@@ -29,7 +29,7 @@ app.use("/api/product", require("./routes/productRoutes"));
 app.use("/api/test", require("./routes/testRoute"));
 app.get("/set-cookie", (req, res) => {
   // Set a cookie with HttpOnly flag
-  res.cookie("tokenr", "Example cookie", {
+  res.cookie("token", "Example cookie", {
     httpOnly: true, // Prevents JavaScript from accessing the cookie
     secure: false, // Ensures cookie is sent only over HTTPS (use false for local dev if not using HTTPS)
     path: "/get-cookie",
@@ -40,7 +40,7 @@ app.get("/set-cookie", (req, res) => {
 });
 app.get("/get-cookie", (req, res) => {
   // Set a cookie with HttpOnly flag
-  const token = req.cookies.tokenr;
+  const token = req.cookies.token;
   if (token) {
     res.send(`Cookie value: ${token}`);
   } else {
