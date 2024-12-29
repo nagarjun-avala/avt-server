@@ -42,27 +42,27 @@ model Role {
 }
 
 model Admin {
-  id               String    @id @default(uuid()) @db.Uuid
+  id               String   @id @default(uuid()) @db.Uuid
   avatar           String?
-  username         String    @unique @db.VarChar(50)
+  username         String   @unique @db.VarChar(50)
   password         String
-  fullname         String    @db.VarChar(100)
-  email            String?   @db.VarChar(100)
-  mobile           String?   @db.VarChar(15)
-  roleId           String    @db.Uuid
-  role             Role      @relation(fields: [roleId], references: [id])
-  isActive         Boolean   @default(true)
-  lastLoginAt      DateTime?
-  theme            String    @default("light") @db.VarChar(20)
-  currency         String    @default("INR") @db.VarChar(10)
-  createdByAdminId String?   @unique @db.Uuid
-  createdByAdmin   Admin?    @relation("AdminCreatedBy", fields: [createdByAdminId], references: [id])
-  updatedByAdminId String?   @db.Uuid
-  updatedByAdmin   Admin?    @relation("AdminUpdatedBy", fields: [updatedByAdminId], references: [id])
-  createdRoles     Role[]    @relation("RoleCreatedBy")
-  updatedRoles     Role[]    @relation("RoleUpdatedBy")
-  createdAdmins    Admin[]   @relation("AdminCreatedBy")
-  updatedAdmins    Admin[]   @relation("AdminUpdatedBy")
+  fullname         String   @db.VarChar(100)
+  email            String?  @db.VarChar(100)
+  mobile           String?  @db.VarChar(15)
+  roleId           String   @db.Uuid
+  role             Role     @relation(fields: [roleId], references: [id])
+  isActive         Boolean  @default(true)
+  lastLoginAt      DateTime
+  theme            String   @default("light") @db.VarChar(20)
+  currency         String   @default("INR") @db.VarChar(10)
+  createdByAdminId String?  @unique @db.Uuid
+  createdByAdmin   Admin?   @relation("AdminCreatedBy", fields: [createdByAdminId], references: [id])
+  updatedByAdminId String?  @db.Uuid
+  updatedByAdmin   Admin?   @relation("AdminUpdatedBy", fields: [updatedByAdminId], references: [id])
+  createdRoles     Role[]   @relation("RoleCreatedBy")
+  updatedRoles     Role[]   @relation("RoleUpdatedBy")
+  createdAdmins    Admin[]  @relation("AdminCreatedBy")
+  updatedAdmins    Admin[]  @relation("AdminUpdatedBy")
 
   AuditLog            AuditLog[]
   InventoryAdjustment InventoryAdjustment[]

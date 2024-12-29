@@ -36,8 +36,11 @@ const categoryController = {
         take: parseInt(limit),
         include: { parent: true, children: true },
       });
-      const total = await db.category.count();
-      return res.status(200).json({ data: categories, total });
+      return res.status(200).json({
+        status: "success",
+        message: "Roles data fetched successfully",
+        categories,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal Server Error" });

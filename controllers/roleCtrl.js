@@ -86,10 +86,7 @@ const roleCtrl = {
       return res.status(200).json({
         status: "success",
         message: "Roles data fetched successfully",
-        data: {
-          len: roles.length,
-          roles,
-        },
+        roles,
       });
     } catch (error) {
       console.error(error);

@@ -60,6 +60,7 @@ const authCtrl = {
           fullname,
           email,
           mobile,
+          lastLoginAt: new Date(),
           password: hashedPassword,
           roleId,
           isActive,
