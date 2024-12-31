@@ -6,7 +6,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server",
     "dev": "nodemon server",
-    "seed": "node prisma/seed.js"
+    "seed": "node prisma/seed.js",
+    "convert": "node convertor/convert.js",
+    "print": "node convertor/jsonPrint.js"
   },
   "keywords": [],
   "author": "Nagarjun A",

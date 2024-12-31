@@ -28,6 +28,9 @@ async function main() {
   const orderedFileNames = [
     "role.json", //-Done
     "category.json", //-Done
+    // "country.json",
+    // "timezone.json",
+    // "translation.json",
   ];
 
   // return null /** Please create Seed Data first According to databse model */
