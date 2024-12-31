@@ -96,7 +96,7 @@ const authCtrl = {
       if (!password)
         errors.push({
           field: "password",
-          message: "This password is required.",
+          message: "Password is required.",
         });
 
       const admin = await db.admin.findUnique({
@@ -105,6 +105,9 @@ const authCtrl = {
         },
       });
 
+      console.log({ admin, errors });
+
+      return res.status(400);
       if (!admin) {
         return res.status(400).json({
           status: "error",
@@ -143,12 +146,15 @@ const authCtrl = {
         maxAge: 24 * 60 * 60 * 1000, // 1 day
       });
 
+      const date = new Date();
+      console.log(date);
+
       const updatedAdmin = await db.admin.update({
         where: {
           id: admin.id,
         },
         data: {
-          lastLoginAt: new Date(),
+          lastLoginAt: date,
         },
         include: {
           role: true,
@@ -208,7 +214,7 @@ const authCtrl = {
           if (error)
             return res.status(401).json({
               status: "error",
-              message: "Please login now!",
+              message: "Please login now,Session expired!",
             });
 
           const admin = await db.admin.findUnique({
@@ -243,13 +249,13 @@ const authCtrl = {
 
 const createAccessToken = async (payload) => {
   return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
 };
 
 const createRefreshToken = async (payload) => {
   return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "1d",
+    expiresIn: "2d",
   });
 };
 
